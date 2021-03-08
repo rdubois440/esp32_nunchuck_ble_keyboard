@@ -273,13 +273,11 @@ Cross 4 zones
 Learning is not trivial, but reasonable. 1 to 2 weeks of 20 minutes daily practice should get you started. 
 At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
 
-Can it be useful ?
+# Can it be useful ?
 Whenever full control in one hand is required
 Handicaped, professional activity, presentation
 Keyboard can easily be curstomised for a given subset of keys of professional usage (data collection, control)
 
-Comments :
-rdubois440@gmail.com
 
 # Links
 
