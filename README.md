@@ -168,7 +168,7 @@ and then refer to their colors.
 In my case, the colour wires were as follows
 
 Signal   | Colour  | Connected to  | Signal Name       
--------------------|---------------|---------------       
+---------|---------|---------------|---------------       
 SDA      | Yellow  | Arduino SDA   | Data           
 DD       | Brown   | Not Connected | Device Detect               
 Vcc      | Pink    | Arduino +3.3v | VCC            
@@ -177,11 +177,6 @@ NC       |         | Not Connected | Not Connected
 SCL      | White   | Arduino SCL   | Clock       
        
 After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above. 
-
-Connect the USB mini arduino connector to a USB plug on the computer. The computer provides 5V to the arduino, which in turns provides 3.3 V to the nunchuck. 
-This has worked on a wide range of computers, running linux and windows. No current limitation problem noticed
-
-
 
 ## Olimex Adapter
 
@@ -214,13 +209,16 @@ Notice the foam used to keep everything in place, and the small lever, making it
 # Arduino Code Structure
 
 Use the I2C Wire Library for communication with nunchuck
+Use the BleKeyboard ESP32 Library for the implementation of Hid over Gatt 
 
-Setup function
-Initialize Wire library for i2c connections
-Keyboard.init
-Mouse.init
 
-Loop Function
+
+## Setup function
+Initialize Wire library for i2c connections, as well as BleKeyboard 
+BleKeyboard.init()
+Mouse.init()
+
+## Loop Function
 if cButton is pressed, uses the mouse mode
 	Simpy move the mouse in the appropriate direction
 
@@ -238,18 +236,22 @@ if cButton is NOT pressed, uses the keyboard mode
 	Radius is used to determine if within the central area
 	Cosine of Angle Plus X polararity determines the segment
 
-Logic is simple.
-Remains in central area: Do nothing
-Outside of central area: Keep record of quadrants visited
-Back in central area: Process the sequence of quadrants visited, and send character
+Logic is simple.    
+ * Remains in central area: Do nothing
+ * Outside of central area: Keep record of quadrants visited
+ * Back in central area: Record the zones visited into and format into a sequence, then call the parseSequence() function
 
-ParseSequence Function
+## ParseSequence Function
 
-Parses the sequence and send the corresponding key to USB
-if zbutton is pressed, uses the keypad mode. Otherwise, uses the standard keyboard mode
+Check the status of cButton and zButton.    
+Compares the sequence with one of the expected sequences    
+Send the corresponding character if the sequences match. Do nothing if no match   
 
-Extensions of the 8Pen standard
-New line, space and back space on single movement ( simple down, right or left)
+## Blinking - Power Off
+
+One times is used to blink the on line Blue Led when active, and provides feedback
+Another timer is reset at the end of each sequence (back to zone 0 from another zone), and power off the esp32 if no action for 5 minutes.
+
 # Can it be useful ?
 Whenever full control in one hand is required
 Handicaped, professional activity, presentation
@@ -266,5 +268,6 @@ https://create.arduino.cc/projecthub/infusion/using-a-wii-nunchuk-with-arduino-5
 https://www.xarg.org/2016/12/using-a-wii-nunchuk-with-arduino/
 # Document Generation
 '''
+pandoc -s -o Nunchuck_Ble_Keyboard.pdf  README.md
 pandoc -s -o Nunchuck_Ble_Keyboard.pdf  -V geometry:"top=1cm, bottom=1cm, left=1cm, right=1cm" README.md
 '''
