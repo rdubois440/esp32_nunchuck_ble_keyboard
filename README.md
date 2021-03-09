@@ -5,40 +5,173 @@
 
 # Objectives
 
-Provide a single hand, ligthweight ,ultra portable and fun, bluetooth for phones and tablets, using a Wii Nunchuck
+Provide a single hand, ligthweight, ultra portable and fun bluetooth keyboard for phones and tablets, using a Wii Nunchuck
 
 ![Nunchuck as a Keyboard](images/IMG_20210307_122031.jpg) 
 
-# Background   
+# Original Keys Arrangements - 8Pen Project   
 
-An earlier project (end 2013) was to create a single hand keyboard, more or less complete, alphanumeric keys, punctuation. Original connection was USB only, targeted at computers.
-Mouse emulation was added later, as it was an easy extension.
+See the links to the 8Pen project at the end of this article, and an description of the concept below (Copied from http://www.8pen.com/concept):
 
-The original idea, using a computer, was “I only have 2 hands. I need both hands for my keyboard. Why the hell was the mouse ever invented ?”
-There are 2 solutions to the problem:   
-1. Do not use the mouse, dedicate both hands to the keyboard    
-2. Find a sngle hand keyboard, and use you free hand for the mouse     
-
-I tried mulitples “single hand keyboard” approaches    
-	* learn to use the full keyboard with a single hand (left hand in my case)
-	* Find a better layout, half size keyboard, mirrored layout, etc. 
-
-Then came the idea of using a nunchuck as a single hand keyboard.
-All of the ideas above work. They require some training, but after about 2 weeks, they can be used. But none of them is efficient.
-
-
-# Original Keys Arrangements - Inspired from the 8Pen Project   
-
-See links below to the 8Pen project.    
-
-Usage : Copied from http://www.8pen.com/concept
-
-    • To enter a letter, start by placing the finger/pointer in the central region
-    • Without lifting, move out in the sector that contains the letter
-    • Turn clockwise or anti-clockwise, according to the side on which the letter lies
-    • Cross 1 to 4 branches, according to the order of the letter on the boundary, and return to the center to place it
+ * To enter a letter, start by placing the finger/pointer in the central region
+ * Without lifting, move out in the sector that contains the letter
+ * Turn clockwise or anti-clockwise, according to the side on which the letter lies
+ * Cross 1 to 4 branches, according to the order of the letter on the boundary, and return to the center to place it
 
 ![8Pen Layout](images/8pen_color.jpeg)  
+
+
+# Entering Characters
+
+See the zones identified as zone0 to zone4 below.    
+At rest, the nunchuck is in zone0. If moved to the direction of west, this is zone1. North is zone2 etc.    
+The code tracks the position of the nunchuck. and records it in a sequence.    
+A sequence starts from zone 0, and ends when back to zone 0.    
+When recording the sequence, the starting and ending zones, both are 'zone0' are omitted.    
+The longest sequence required to encode a complete keyboard crosses 4 branches or "zone borders" or a complete turn. The longest sequence to record is therefore 5 zones long, starting and ending in 
+the same zone. 
+   
+Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	letter 'q'   
+
+## Entering The Letter 'e'
+
+In the example below, the zone history is zone0 - zone4 - zone3 - zone0. and is encoded as 
+
+![Entering the Letter 'e'](images/letter_e.png)
+
+```
+			case 0x43000:		inKey = 'e';	break;
+```
+
+## Entering The Letter 'k'
+
+In this other example, the sequence is zone0 - zone1 - zone2 - zone3 - zone4 - zone 0, and is encoded as 
+
+![Entering the Letter 'k'](images/letter_k.png)
+
+```
+			case 0x12340:		inKey = 'k';	break;
+```
+
+## Long Sequence example   
+
+Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	letter 'q'   
+```
+			case 0x43214:		inKey = 'q';	break;
+```
+
+
+# Full Keyboard Arrangement
+
+## Alphabetic Characters
+
+The original letter arrangement of the 8Pen project is not used for this project, the letters are re-organized according to their frequency in the English language.
+To the best of my knowledge, this is the alphabet organized by frequency
+
+```
+E T A O I N S H R D L C U M W F G Y P B V K J X Q Z
+```
+
+This is the chosen layout 
+
+
+![Full Keyboard Layout](images/keyboard_layout.png)
+
+Sequence examples
+
+
+Starting from zone4, turning clockwise, crossing 1 zone is letter  'e'    
+Starting from zone4, turning clockwise, crossing 2 zones is letter  'r'    
+Starting from zone4, turning clockwise, crossing 3 zones is letter  'g'    
+Starting from zone4, turning clockwise, crossing 4 zones is letter  'q'    
+
+Starting from zone4, turning counter clockwise, crossing 1 zone is letter  'i'    
+Starting from zone4, turning counter clockwise, crossing 2 zones is letter  'u'    
+Starting from zone4, turning clockwise, crossing 3 zones is letter  'v'    
+
+## cButton and zButton
+
+There are two buttons on the nunchuck. 
+The big square button is the z button, the small round button is the c button.
+
+ * None of these buttons is pressed when entering alphabetic characters. 
+ * Pressing z button only (large square button) enters numeric characters and punctuation.
+ * Pressing both z and c buttons enters special characters.
+ * Pressing c button only is not used at the moment. This mode could be used to enter more characters, or move the mouse with the joystick, similar to joysticks on laptops
+
+
+## Alphabetic Characters Entry
+
+Most frequent keys (Enter, Backspace, Space) are entered with a single return to / from zone0 to one of zone4, zone3 or zone1.
+
+
+  Zone            |         |          |
+------------------|---------|----------|
+ North            |                    |
+ South            |     Enter          |
+ East             |     Backspace      |
+ West             |     Space          |
+
+
+Filler text
+
+
+ Crossed zones    |   CW    |    CCW   |
+------------------|---------|----------|
+                  |         |         .|
+ 1 zone crossed   | E T A O | I N S H  |
+ 2 zones crossed  | R D L C | U M W F  |
+ 3 zones crossed  | G Y P B | V K J X  |   
+ 4 zones crossed  | Q Z     |          |   
+
+
+## Numeric and Puncutations
+
+
+
+
+  Zone            |         |          |
+------------------|---------|----------|
+ North            |     UP Arrow       |
+ South            |     DOWN Arrow     |
+ East             |     Left Arrow     |
+ West             |     Right Arrow    |
+                  |         |          |
+ Crossed zones    |   CW    |    CCW   |
+                  |         |         .|
+ 1 zone crossed   | 0 1 2 3 | 4 5 6 7  |
+ 2 zones crossed  | 8 9 - , | .        |
+ 3 zones crossed  |         |          |   
+ 4 zones crossed  |South-CW4-Power Off |   
+------------------|---------|----------|
+
+
+## zButton AND cButton Pressed 
+
+  Zone            |         |          |
+------------------|---------|----------|
+ North            |                    |
+ South            |                    |
+ East             |       Escape       |
+ West             |        TAB         |
+                  |         |          |
+ 1 zone crossed   |         |          |
+ 2 zones crossed  |         |          |
+ 3 zones crossed  |         |          |   
+ 4 zones crossed  |                    |   
+------------------|---------|----------|
+
+
+
+
+
+
+# Learning Required    
+
+Learning is not trivial, but reasonable. 1 to 2 weeks of 20 minutes daily practice should get you started. 
+At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
+
+
 
 # Implementation   
 
@@ -83,14 +216,30 @@ This has worked on a wide range of computers, running linux and windows. No curr
 
 ## Olimex Adapter
 
+For quick prototyping, without destroying the original nunchuck by cutting the cable, Olimex makes this nice breakout board
+
 www.olimex.com
 MOD-WII-UEXT
 MOD-Wii-UEXT-NUNCHUCk
 
 
 
-![Optional Olimex breakout board](images/Olimex_MOD-WII-UEXT.jpg)
+![Olimex breakout board](images/IMG_20210308_093404.jpg)
 
+![Olimex breakout board - pinout](images/2021-03-08-104958_1366x768_scrot.png)
+
+
+
+# Assembly
+
+Microcontroller board is a Wemos Lolin32 Lite
+
+The housing of a mini usb hub was a perfect candidate for this.    
+The 500maH battery is taped under the board 
+Notice the foam used to keep everything in place, and the small lever, making it easier to press the reset button through one of the existing holes
+
+
+![Optional Olimex breakout board](images/IMG_20210308_102711.jpg)
 
 
 # Arduino Code Structure
@@ -132,147 +281,6 @@ if zbutton is pressed, uses the keypad mode. Otherwise, uses the standard keyboa
 
 Extensions of the 8Pen standard
 New line, space and back space on single movement ( simple down, right or left)
-
-# Basic Letter Arrangement
-
-```
-
-Cross 1 zone
-
-					E T A O
-					I N S H
-
-Cross 2 zones
-
-					E T A O
-					U M W F
-
-Cross 3 zones
-
-					G Y P B
-					V K J X
-
-Cross 4 zones
-
-					Q Z
-
-								J	P
-
-								W	L
-
-								S	A
-							  /		  \
-				Z	Y	D	T			N	M	K
-
-					X 	F	H			O	C	B
-							  \		  /
-								E	I
-
-								R	U
-
-								G	V
-
-								Q
-
-
-
-
-```
-# Zones
-
-'''
-
-
-
-						\                       /
-						 \       Zone 3        /
-						  \                   /
-						   \                 /
-							\               /
-							 \             /
-							  \           /
-							   \         /								
-								+-------+
-				Zone 2          | Zone  |		Zone 4
-								|   0   |
-								+-------+
-							   /         \	     							
-							  /           \
-							 /             \
-							/               \
-						   /                 \
-						  /       Zone 1      \
-						 /                     \
-						/                       \
-						
-
-
-'''
-
-
-
-# Full Keyboard Mapping    
-
-## No Button Pressed 
-
-  Zone            |         |          |
-------------------|---------|----------|
- North            |                    |
- South            |     Enter          |
- East             |     Backspace      |
- West             |     Space          |
-                  |         |          |
- Crossed zones    |   CW    |    CCW   |
-                  |         |         .|
- 1 zone crossed   | E T A O | I N S H  |
- 2 zones crossed  | R D L C | U M W F  |
- 3 zones crossed  | G Y P B | V K J X  |   
- 4 zones crossed  | Q Z     |          |   
-
-
-## zButton Pressed 
-
-  Zone            |         |          |
-------------------|---------|----------|
- North            |     UP Arrow       |
- South            |     DOWN Arrow     |
- East             |     Left Arrow     |
- West             |     Right Arrow    |
-                  |         |          |
- Crossed zones    |   CW    |    CCW   |
-                  |         |         .|
- 1 zone crossed   | 0 1 2 3 | 4 5 6 7  |
- 2 zones crossed  | 8 9 - , | .        |
- 3 zones crossed  |         |          |   
- 4 zones crossed  |South-CW4-Power Off |   
-------------------|---------|----------|
-
-
-## zButton AND cButton Pressed 
-
-  Zone            |         |          |
-------------------|---------|----------|
- North            |                    |
- South            |                    |
- East             |       Escape       |
- West             |        TAB         |
-                  |         |          |
- 1 zone crossed   |         |          |
- 2 zones crossed  |         |          |
- 3 zones crossed  |         |          |   
- 4 zones crossed  |                    |   
-------------------|---------|----------|
-
-
-
-
-
-
-# Learning Required    
-
-Learning is not trivial, but reasonable. 1 to 2 weeks of 20 minutes daily practice should get you started. 
-At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
-
 # Can it be useful ?
 Whenever full control in one hand is required
 Handicaped, professional activity, presentation
