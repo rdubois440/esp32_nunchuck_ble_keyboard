@@ -23,12 +23,12 @@ See the links to the 8Pen project at the end of this article, and an description
 
 # Entering Characters
 
-See the zones identified as zone0 to zone4 below.    
+See the zones identified as zone0 to zone4 below, and the branches separating the zones.    
 At rest, the nunchuck is in zone0. If moved to the direction of west, this is zone1. North is zone2 etc.    
 The code tracks the position of the nunchuck. and records it in a sequence.    
 A sequence starts from zone 0, and ends when back to zone 0.    
 When recording the sequence, the starting and ending zones, both are 'zone0' are omitted.    
-The longest sequence required to encode a complete keyboard crosses 4 branches or "zone borders" or a complete turn. The longest sequence to record is therefore 5 zones long, starting and ending in 
+The longest sequence required to encode a complete keyboard crosses 4 branches in a complete turn. The longest sequence to record is therefore 5 zones long, starting and ending in 
 the same zone. 
    
 Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	letter 'q'   
@@ -63,7 +63,6 @@ Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	l
 
 # Full Keyboard Arrangement
 
-## Alphabetic Characters
 
 The original letter arrangement of the 8Pen project is not used for this project, the letters are re-organized according to their frequency in the English language.
 To the best of my knowledge, this is the alphabet organized by frequency
@@ -71,23 +70,6 @@ To the best of my knowledge, this is the alphabet organized by frequency
 ```
 E T A O I N S H R D L C U M W F G Y P B V K J X Q Z
 ```
-
-This is the chosen layout 
-
-
-![Full Keyboard Layout](images/keyboard_layout.png)
-
-Sequence examples
-
-
-Starting from zone4, turning clockwise, crossing 1 zone is letter  'e'    
-Starting from zone4, turning clockwise, crossing 2 zones is letter  'r'    
-Starting from zone4, turning clockwise, crossing 3 zones is letter  'g'    
-Starting from zone4, turning clockwise, crossing 4 zones is letter  'q'    
-
-Starting from zone4, turning counter clockwise, crossing 1 zone is letter  'i'    
-Starting from zone4, turning counter clockwise, crossing 2 zones is letter  'u'    
-Starting from zone4, turning clockwise, crossing 3 zones is letter  'v'    
 
 ## cButton and zButton
 
@@ -100,85 +82,73 @@ The big square button is the z button, the small round button is the c button.
  * Pressing c button only is not used at the moment. This mode could be used to enter more characters, or move the mouse with the joystick, similar to joysticks on laptops
 
 
+
 ## Alphabetic Characters Entry
 
+This is the chosen layout 
+
+![Full Keyboard Layout](images/keyboard_layout.png)
+
+
 Most frequent keys (Enter, Backspace, Space) are entered with a single return to / from zone0 to one of zone4, zone3 or zone1.
+Sequence examples
 
 
-  Zone            |         |          |
-------------------|---------|----------|
- North            |                    |
- South            |     Enter          |
- East             |     Backspace      |
- West             |     Space          |
-
-
-Filler text
-
-
- Crossed zones    |   CW    |    CCW   |
-------------------|---------|----------|
-                  |         |         .|
- 1 zone crossed   | E T A O | I N S H  |
- 2 zones crossed  | R D L C | U M W F  |
- 3 zones crossed  | G Y P B | V K J X  |   
- 4 zones crossed  | Q Z     |          |   
-
-
-## Numeric and Puncutations
+ * A quick trip from zone0 to zone1 and back is a space
+ * A quick trip from zone0 to zone3 and back is a backspace
+ * A quick trip from zone0 to zone4 and back is an Enter
 
 
 
+ * Starting from zone4, turning clockwise, crossing 1 branch is letter  'e'
+ * Starting from zone4, turning clockwise, crossing 2 branches is letter  'r'
+ * Starting from zone4, turning clockwise, crossing 3 branches is letter  'g'
+ * Starting from zone4, turning clockwise, crossing 4 branches is letter  'q'
 
-  Zone            |         |          |
-------------------|---------|----------|
- North            |     UP Arrow       |
- South            |     DOWN Arrow     |
- East             |     Left Arrow     |
- West             |     Right Arrow    |
-                  |         |          |
- Crossed zones    |   CW    |    CCW   |
-                  |         |         .|
- 1 zone crossed   | 0 1 2 3 | 4 5 6 7  |
- 2 zones crossed  | 8 9 - , | .        |
- 3 zones crossed  |         |          |   
- 4 zones crossed  |South-CW4-Power Off |   
-------------------|---------|----------|
+ * Starting from zone4, turning counter clockwise, crossing 1 branch is letter  'i'
+ * Starting from zone4, turning counter clockwise, crossing 2 branches is letter  'u'
+ * Starting from zone4, turning clockwise, crossing 3 branches is letter  'v'
 
 
-## zButton AND cButton Pressed 
+## Numeric and Puncutations - zButton pressed
 
-  Zone            |         |          |
-------------------|---------|----------|
- North            |                    |
- South            |                    |
- East             |       Escape       |
- West             |        TAB         |
-                  |         |          |
- 1 zone crossed   |         |          |
- 2 zones crossed  |         |          |
- 3 zones crossed  |         |          |   
- 4 zones crossed  |                    |   
-------------------|---------|----------|
+This is the chosen layout 
+
+![Full Keyboard Layout - Digits](images/keyboard_layout_digits.png)
+
+### Direction keys
+
+ * A quick trip from zone0 to zone1 and back is a RIGHT Arrow
+ * A quick trip from zone0 to zone2 and back is an UP Arrow 
+ * A quick trip from zone0 to zone3 and back is a LEFT Arrow
+ * A quick trip from zone0 to zone4 and back is a DOWN Arrow
 
 
+### Puntuation and Special Characters:
 
+ * Starting from zone2, turning clockwise, crossing 2 branches prints a hyphen '-'
+ * Starting from zone1, turning clockwise, crossing 2 branches prints a comma ','
+ 
+ * Starting from zone4, turning counter clockwise, crossing 2 branches prints a single dot '.'
+ * Starting from zone1, turning counter clockwise, crossing 2 branches prints a slash '/'
+ * Starting from zone2, turning counter clockwise, crossing 2 branches prints a vertical bar '|'
+ * Starting from zone3, turning counter clockwise, crossing 2 branches prints a tilde '~'
+
+ * Starting from zone4, a full turn clockwise is a power off mode (in fact deep sleep)
+
+
+## Special Actions - zButton AND cButton Pressed 
+
+ * A quick trip from zone0 to zone1 and back is a TAB
+ * A quick trip from zone0 to zone3 and back is an ESCAPE
 
 
 
 # Learning Required    
 
-Learning is not trivial, but reasonable. 1 to 2 weeks of 20 minutes daily practice should get you started. 
+Learning is not trivial, but reasonable.    
+2 weeks of 20 minutes daily practice should get you started. 
 At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
-
-
-
-# Implementation   
-
-Available only on android. Will never be available on iOS devices
-
-Use the joystick on the nunchuck (not the accelerometers)
-Use the buttons for special characters and Mouse emulation
 
 # Limitations    
 Multiple keys is not possible. Example Control – C
@@ -197,16 +167,15 @@ and then refer to their colors.
 
 In my case, the colour wires were as follows
 
-Signal   | Colour  | Connected to  | Signal Name
--------------------|---------------|---------------
-SDA      | Yellow  | Arduino SDA   | Data    
-DD       | Brown   | Not Connected | Device Detect        
-Vcc      | Pink    | Arduino +3.3v | VCC     
-Gnd      | Green   | Arduino GND   | GND     
-NC       |         | Not Connected | Not Connected        
-SCL      | White   | Arduino SCL   | Clock   
--------------------|---------------|----------------
-
+Signal   | Colour  | Connected to  | Signal Name       
+-------------------|---------------|---------------       
+SDA      | Yellow  | Arduino SDA   | Data           
+DD       | Brown   | Not Connected | Device Detect               
+Vcc      | Pink    | Arduino +3.3v | VCC            
+Gnd      | Green   | Arduino GND   | GND            
+NC       |         | Not Connected | Not Connected               
+SCL      | White   | Arduino SCL   | Clock       
+       
 After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above. 
 
 Connect the USB mini arduino connector to a USB plug on the computer. The computer provides 5V to the arduino, which in turns provides 3.3 V to the nunchuck. 
