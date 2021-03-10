@@ -1,16 +1,21 @@
 //Todo
 //
+// - Find a name
 // - Use the nunchuck library - clean up the code
 //
 // - Add Alt Tab - Review the logic of key press / key release - or use the3 Android buttons
-// - Esc Alt Ctrl Tab | / ~
-// - 4 special Android buttons - Home - App Switch - Context Menu - Back
 //	 Notice that App Switch is just Alt Tab - Alt is mainained for some extra time between presses
-// - Something strange occurs on first nunchuck. When xValue = 255 AND yValue = 255. Radius becomes negative. Root cause is identified (potentiometers), but why is radius negative ?
+// - 2 special Android buttons - Home - Back
 
+// - Something strange occurs on first nunchuck. When xValue = 255 AND yValue = 255. Radius becomes negative. Root cause is identified (potentiometers), but why is radius negative ?
+// - Implement an Off line - dictaphone mode - If not connected, then store all text entered, and dump later
+//
+// - Rewrite using freertos directly without the arduino ide - requires porting hid over gatt to freertos
+// - Multi device support (like K380 F1 F2 F3)
 
 // Done
-
+//	Implemented the Application Key - Menu Key
+// - Esc  Tab | / ~
 // - direction keys
 // - Power off on dedicated joystick movement
 // - Something strange occurs on first nunchuck. When xValue = 255 AND yValue = 255. Radius becomes negative.
@@ -39,6 +44,9 @@
 				+-----------------------+      +-------------------------+
                                         +------+
 
+	Nunchuck on board connector
+
+				Pink	Brown 	White	Yellow	Green
 
 
 */
@@ -539,7 +547,7 @@ void gotosleep()
 	}
 
 
-void parseSequence(long composite, uint9_t zoneCount)
+void parseSequence(long composite, uint8_t zoneCount)
 {
 	char inKey;
 
@@ -630,6 +638,7 @@ void parseSequence(long composite, uint9_t zoneCount)
 
 			case 0x41000:		inKey = '4';	break;
 			case 0x41200:		inKey = '.';	break;
+			case 0x41234:		inKey = 0xed;	break;			// This is the Windows Application Key - Menu key - equivalent to mouse right click
 
 			case 0x12000:		inKey = '5';	break;
 			case 0x12300:		inKey = '/';	break;

@@ -1,4 +1,4 @@
-# Nunchuck Based Bluetooth Keyboard for Phones and Tablets 
+# NunKBD - Nunchuck Based Bluetooth Keyboard for Phones and Tablets 
 
 
 
@@ -8,6 +8,20 @@
 Provide a single hand, ligthweight, ultra portable and fun bluetooth keyboard for phones and tablets, using a Wii Nunchuck
 
 ![Nunchuck as a Keyboard](images/IMG_20210307_122031.jpg) 
+
+
+# Benefits
+
+ * Lightweight - fun - reaasonably efficient
+ * Single hand operation
+ * Cross platform support. Natural target is Android phones, but works just as well with tablets, Windows and Linux PCs, Chromebooks, Mac, and even iPhones
+ * Natively supported on all these platforms, nothing to install. Nunkbd behaves as a standard Bluetooth Keyboard
+ * Does not consume any spcace on the display. Compared to soft on-screen keyboards, screen space is completely free
+ * An octogon limits the movement of the joystick. This octogon shape provides natural feedback about the movements
+ * Keyboard can easily be curstomised for a given subset of keys of professional usage (data collection, control)
+ * Could be useful to handicapped people. Alphabetic characters are accessible with a single finger. 
+ * With some experience, it can be used when walking. For taking quick notes, if you accept a reasonable amount of typing errors, it can be used without watching the screen, 
+ to the octogonal shape limiting, and providing feedback to the movements of the joystick
 
 # Original Keys Arrangements - 8Pen Project   
 
@@ -64,7 +78,7 @@ Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	l
 # Full Keyboard Arrangement
 
 
-The original letter arrangement of the 8Pen project is not used for this project, the letters are re-organized according to their frequency in the English language.
+The original letter arrangement of the 8Pen project is not used for NunKbd, the letters are re-organized according to their frequency in the English language.
 To the best of my knowledge, this is the alphabet organized by frequency
 
 ```
@@ -150,10 +164,18 @@ Learning is not trivial, but reasonable.
 2 weeks of 20 minutes daily practice should get you started. 
 At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
 
+I personally use command line gtypist for practicing. See nunchuck.typ for a ready made set of lessons customized for NunKbd
+
+
 # Limitations    
 Multiple keys is not possible. Example Control – C
 BUT it is possible to create a special key combinations. Alt Tab is implemented as a single key, as it is very useful for switching between open applications.
 This is also how the Application Swith button is implemented on commercial Bluetooth Keyboards (Ex Logitech K380)
+
+# Extensions
+
+ * Support multiple devices   
+
 
 # Wiring   
 
@@ -176,7 +198,14 @@ Gnd      | Green   | Arduino GND   | GND
 NC       |         | Not Connected | Not Connected               
 SCL      | White   | Arduino SCL   | Clock       
        
-After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above. 
+After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above.    
+
+Program is configured to expect SDA on pin 4, and SCL on pin 16
+```
+  Wire.begin(4,16);
+```
+
+
 
 ## Olimex Adapter
 
@@ -202,9 +231,30 @@ The housing of a mini usb hub was a perfect candidate for this.
 The 500maH battery is taped under the board 
 Notice the foam used to keep everything in place, and the small lever, making it easier to press the reset button through one of the existing holes
 
+## Tip for Makers
 
-![Optional Olimex breakout board](images/IMG_20210308_102711.jpg)
+The nunchuck enclosure is pretty empty. It just contains a small board, horizontally mounted below the joystick and behind the 2 buttons. 
+The handle part is empty, and the Lolin32 could nearly fit in this space. It must be possible to create a 3D printed handle (just the bottom part), slightly bigger
+than the origial one, and have the microcontroller and battery inside this handle.
 
+
+![Assembly ](images/IMG_20210308_102711.jpg)
+
+# Arduino IDE
+
+Install support for board "Wemos Lolin32 Lite".    
+
+The tool menu should look like this when connected to the esp32 lolin32 lite board:
+                                                                                                                                    Tools --> Board --> Board Manager --> Add the board support                                                                                                                                                                                                                                                                                                                                                          
+
+
+IDE Setting for Wemos Lolin32 Lite - Dec 2020                                                                                                                                                                                                                                 
+Board           Wemos Lolin 32                                                                                                         Upload speed    115200                                                                                                                 CPU Freq        240Mhz (Wifi / BT)                                                                                                     
+Flash Freq      80Mhz                                                                                                                  
+Part Scheme     Default                                                                                                                
+Port            /dev/ttyUSB0                                                                                                           
+                                                                                                                                       
+                      
 
 # Arduino Code Structure
 
@@ -247,15 +297,38 @@ Check the status of cButton and zButton.
 Compares the sequence with one of the expected sequences    
 Send the corresponding character if the sequences match. Do nothing if no match   
 
-## Blinking - Power Off
 
-One times is used to blink the on line Blue Led when active, and provides feedback
-Another timer is reset at the end of each sequence (back to zone 0 from another zone), and power off the esp32 if no action for 5 minutes.
+## Debouncing   
+There is no debouncing between zone0 and the other zones, the peripheral zones. This does not seem to cause any problem.
 
-# Can it be useful ?
-Whenever full control in one hand is required
-Handicaped, professional activity, presentation
-Keyboard can easily be curstomised for a given subset of keys of professional usage (data collection, control)
+Between the peripheral zones, the debouncing works as follows:
+When moving from zone[n] to zone[n+1], if zone[n+1] is the same as zone[n-1], then decrement the zone counter. In other words, forget about visiting zone[n], the current zone.
+Where n is the current zone, n-1 is the previous zone, and n+1 is the potential future zone
+
+
+
+## Blinking Led
+
+One timer is used to blink the built-in Blue Led when active, and provides feedback, one quick 50 millisecond blink every second
+When using the "Power off" command, the Led is turned ON for one second before the microcontroller is set to deep sleep. This provides a nice confirmation.
+
+## Power Modes
+
+There is no power switch, the esp32 board is always powered.
+The microcontroller is put to deep sleep mode in either of 2 conditions:
+ * The joystick remainded untouched for the last 5 minutes
+ * The special "Power Off" sequence is manually entered.   
+
+The reset switch takes the microcontroller out of deep sleep when pressed, the keyboard reconnects in 5 seconds
+
+## Termux on Android
+
+Why do I need a keyboard so much on my phone?   
+I am a big fan of using termux on Android. Termux provides a pretty complete linux environment on any recent Android device, without special requirement. No root required.   
+Many standard linux packages can be installed (Ex: pkg install gtypist taskwarrior ...)
+X11 Gui programs can be installed as well, XServer XSDL provides an Android native X11 server that termux programs can use.   
+Whenever possible, I use command line programs under termux. At a desk, I use a normal bluetooth keyboard, on the move, I take my nunchuck
+
 
 
 # Links
@@ -269,5 +342,5 @@ https://www.xarg.org/2016/12/using-a-wii-nunchuk-with-arduino/
 # Document Generation
 '''
 pandoc -s -o Nunchuck_Ble_Keyboard.pdf  README.md
-pandoc -s -o Nunchuck_Ble_Keyboard.pdf  -V geometry:"top=1cm, bottom=1cm, left=1cm, right=1cm" README.md
+pandoc -s -o Nunchuck_Ble_Keyboard.pdf  -V geometry:"top=2cm, bottom=2cm, left=2cm, right=2cm" README.md
 '''
