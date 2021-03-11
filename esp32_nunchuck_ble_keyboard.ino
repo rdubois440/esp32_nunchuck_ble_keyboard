@@ -1,12 +1,12 @@
 //Todo
 //
+//
+// - Alt Ctrl K 	show - hide keyboard
+// - One character in caps lock - sticky shift
+// - 2 special Android buttons - Home - Back
+//
 // - Use the nunchuck library - clean up the code
 //
-// - Add Alt Tab - Review the logic of key press / key release - or use the3 Android buttons
-// - Alt Ctrl K 	show - hide keyboard
-//	 Notice that App Switch is just Alt Tab - Alt is mainained for some extra time between presses
-// - 2 special Android buttons - Home - Back
-
 // - Something strange occurs on first nunchuck. When xValue = 255 AND yValue = 255. Radius becomes negative. Root cause is identified (potentiometers), but why is radius negative ?
 // - Implement an Off line - dictaphone mode - If not connected, then store all text entered, and dump later
 //
@@ -14,6 +14,7 @@
 // - Multi device support (like K380 F1 F2 F3)
 
 // Done
+// - Add Alt Tab - Review the logic of key press / key release - Notice that App Switch is just Alt Tab - Alt is mainained for some extra time between presses
 //	Implemented the Application Key - Menu Key
 // - Esc  Tab | / ~
 // - direction keys
@@ -26,14 +27,14 @@
 
 /* 	Nunchuck Connector
 
-                      	             +--------------------------------+
+                                    +--------------------------------+
                                     |     Transparent Part on Top    |
-                    				 +--------------------------------+
+                                    +--------------------------------+
                                     |  SDA         DD          VCC   |
                                     |                                |
                                     |  GND         NC          SCL   |
                                     |          +----------+          |
-                     	             +----------+          +----------+
+                                    +----------+          +----------+
 
 	Olimex Breakout Board
 
@@ -395,6 +396,8 @@ void parseSequence(long composite, uint8_t zoneCount)
 {
 	char inKey;
 
+	inKey = 0;
+
 	//Serial.println("Inside parseSequence");
 
 	if (zoneCount > 5)
@@ -503,10 +506,18 @@ void parseSequence(long composite, uint8_t zoneCount)
 		{
 			// Cross 1
 			case 0x10000:		inKey = KEY_TAB;	break;
-			case 0x20000:		inKey = KEY_TAB;	break;
-			case 0x30000:		inKey = KEY_ESC;	break;
-			case 0x40000:		inKey = KEY_TAB;	break;
 
+			case 0x20000:							// Alt Tab emulation - Like F5 on K380 - Do not release KEY_ALT immediately	
+				bleKeyboard.press(KEY_LEFT_ALT);
+				bleKeyboard.press(KEY_TAB);
+				//bleKeyboard.release(KEY_LEFT_ALT);
+				bleKeyboard.release(KEY_TAB);
+				break;
+
+			case 0x30000:		inKey = KEY_ESC;	break;
+
+		//bleKeyboard.press(inKey);
+		//bleKeyboard.release(inKey);
 
 			default:								break;
 
@@ -514,9 +525,13 @@ void parseSequence(long composite, uint8_t zoneCount)
 		}
 	}
 
-	bleKeyboard.press(inKey);
-	bleKeyboard.release(inKey);
-	//Keyboard.write(inKey);	
+	if (inKey != 0)
+	{
+		bleKeyboard.release(KEY_LEFT_ALT);		// Release Alt for any key - except one key Alt Tab
+		bleKeyboard.press(inKey);
+		bleKeyboard.release(inKey);
+		//Keyboard.write(inKey);	
+	}
 }
 
 /* 	Basic code to check the i2c connectivity

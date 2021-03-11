@@ -81,12 +81,12 @@ E T A O I N S H R D L C U M W F G Y P B V K J X Q Z
 ## cButton and zButton
 
 There are two buttons on the nunchuck. 
-The big square button is the z button, the small round button is the c button.
+The big square button is the Z button, the small round button is the C button.
 
  * None of these buttons is pressed when entering alphabetic characters. 
- * Pressing z button only (large square button) enters numeric characters and punctuation.
- * Pressing both z and c buttons enters special characters.
- * Pressing c button only is not used at the moment. This mode could be used to enter more characters, or move the mouse with the joystick, similar to joysticks on laptops
+ * Pressing Z button only (large square button) enters numeric characters and punctuation.
+ * Pressing both Z and C buttons enters special characters.
+ * Pressing C button only is not used at the moment. This mode could be used to enter more characters, or move the mouse with the joystick, similar to joysticks on laptops
 
 
 
@@ -142,12 +142,68 @@ This is the chosen layout
  * Starting from zone3, turning counter clockwise, crossing 2 branches prints a tilde '~'
 
  * Starting from zone4, a full turn clockwise is a power off mode (in fact deep sleep)
+ * Pressing the Z button, a full turn, counter clockwise, starting and ending in zone4. is the Menu key.
+
+
+
 
 
 ## Special Actions - zButton AND cButton Pressed 
 
  * A quick trip from zone0 to zone1 and back is a TAB
  * A quick trip from zone0 to zone3 and back is an ESCAPE
+ * A quick trip from zone0 to zone2 and back, with C and Z buttons pressed, is the Application Switch key.
+
+## Android Special Keys
+
+Bluetooth keyboards designed for Android devices provide 4 extra buttons, Home, Application Switch, Menu and Back. One of the problems with these buttons is that 
+their names are not fully standardized, sometimes used ambiguously
+
+### Application Switch key
+
+Internally, this button is implemented as 2 buttons: Alt and Tab plus some extra logic.
+
+A closer look at the behaviour of this key with evtest shows some extra logic (connect one bluetooth keyboard to a linux PC)
+
+```
+Event: time 1615023308.816492, type 4 (EV_MSC), code 4 (MSC_SCAN), value 700e2
+Event: time 1615023308.816492, type 1 (EV_KEY), code 56 (KEY_LEFTALT), value 1
+Event: time 1615023308.816492, type 4 (EV_MSC), code 4 (MSC_SCAN), value 7002b
+Event: time 1615023308.816492, type 1 (EV_KEY), code 15 (KEY_TAB), value 1
+Event: time 1615023308.816492, -------------- SYN_REPORT ------------
+Event: time 1615023308.828973, type 4 (EV_MSC), code 4 (MSC_SCAN), value 7002b
+Event: time 1615023308.828973, type 1 (EV_KEY), code 15 (KEY_TAB), value 0
+Event: time 1615023308.828973, -------------- SYN_REPORT ------------
+Event: time 1615023309.815427, type 4 (EV_MSC), code 4 (MSC_SCAN), value 700e2
+Event: time 1615023309.815427, type 1 (EV_KEY), code 56 (KEY_LEFTALT), value 0
+Event: time 1615023309.815427, -------------- SYN_REPORT ------------
+```
+
+When pressing this Application Switch key (F5 on my keyboard), 2 virtual keys are pressed, LEFTALT and TAB.   
+When releasing the key, only TAB is released. LEFTALT remains pressed for another 500 milliseconds. then released automaticlally.    
+The result of this logic is that pressing F5 repetitively within less than 500 milliseconds will cycle through all open windows. Pressing F5 after more than 500 milliseconds will 
+only toggle the last 2 open applications.   
+In addition, after 500 milliseconds, the selected application will open in full screen when LEFTALT is released
+
+Nunchuck implements this a bit differently.
+
+A timer would be inefficient, NunKbd cannot be as fast as a regular keyboard. A One-key Alt-Tab is available with both C and Z buttons pressed, and a quick trip from zone0 to zone1 and back. 
+This triggers both KEY_LEFT_ALT and KEY_TAB, but only KEY_TAB is released.   
+ * If the next key is again a One-key Alt-Tab, then KEY_TAB is pressed again, cycling through all open windows
+ * If the next key is a different key, LEFT_ALT is released, and the next key sent normally.
+
+The Application Switch key is available with both C and Z buttons pressed, and a quick trip from zone0 to zone2 and back.
+
+### Menu Key
+
+The menu key is present on most keyboards, at the right of the Space bar. It usually looks like an open menu, with multiple lines. Do not confuse with the right Alt or right Windows key.
+It opens a context related menu on certain applications, equivalent to pressing the 3 dots menu on the top right of the display.
+
+The Menu key is available with Z buttons pressed, and a full turn, counter clockwise, starting and ending in zone4. 
+
+### Home and Back Keys
+
+Home and Back keys are of very little use on a single hand keyboard, and are not implemented at the moment.
 
 
 
