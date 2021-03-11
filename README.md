@@ -1,30 +1,29 @@
-# NunKBD - Nunchuck Based Bluetooth Keyboard for Phones and Tablets 
-
-
+# NunKbd - A Nunchuck Based Bluetooth Keyboard for Android Phones 
 
 
 # Objectives
 
 Provide a single hand, ligthweight, ultra portable and fun bluetooth keyboard for phones and tablets, using a Wii Nunchuck
 
-![Nunchuck as a Keyboard](images/IMG_20210307_122031.jpg) 
+![Nunchuck as a Weapon or as a Keyboard](images/IMG_20210307_122031.jpg) 
 
 
 # Benefits
 
- * Lightweight - fun - reaasonably efficient
+ * Lightweight - Ultra portable - fun - reaasonably efficient
  * Single hand operation
  * Cross platform support. Natural target is Android phones, but works just as well with tablets, Windows and Linux PCs, Chromebooks, Mac, and even iPhones
- * Natively supported on all these platforms, nothing to install. Nunkbd behaves as a standard Bluetooth Keyboard
+ * Natively supported on all these platforms, nothing to install. NunKbd behaves as a standard Bluetooth Keyboard
  * Does not consume any spcace on the display. Compared to soft on-screen keyboards, screen space is completely free
  * An octogon limits the movement of the joystick. This octogon shape provides natural feedback about the movements
- * Keyboard can easily be curstomised for a given subset of keys of professional usage (data collection, control)
+ * Keyboard can easily be curstomised for a given subset of keys for a professional usage (data collection, control)
  * Could be useful to handicapped people. Alphabetic characters are accessible with a single finger. 
  * With some experience, it can be used when walking. For taking quick notes, if you accept a reasonable amount of typing errors, it can be used without watching the screen, 
  to the octogonal shape limiting, and providing feedback to the movements of the joystick
 
-# Original Keys Arrangements - 8Pen Project   
+# Original Keys Arrangement - 8Pen Project   
 
+The NunKbd project was initially inspired by the 8Pen project. 
 See the links to the 8Pen project at the end of this article, and an description of the concept below (Copied from http://www.8pen.com/concept):
 
  * To enter a letter, start by placing the finger/pointer in the central region
@@ -37,7 +36,7 @@ See the links to the 8Pen project at the end of this article, and an description
 
 # Entering Characters
 
-See the zones identified as zone0 to zone4 below, and the branches separating the zones.    
+See the zones identified as zone0 to zone4 below, and the branches separating the zones (the diagonal lines).    
 At rest, the nunchuck is in zone0. If moved to the direction of west, this is zone1. North is zone2 etc.    
 The code tracks the position of the nunchuck. and records it in a sequence.    
 A sequence starts from zone 0, and ends when back to zone 0.    
@@ -67,12 +66,6 @@ In this other example, the sequence is zone0 - zone1 - zone2 - zone3 - zone4 - z
 			case 0x12340:		inKey = 'k';	break;
 ```
 
-## Long Sequence example   
-
-Long sequence example: zone0 - zone4 - zone3 - zone2 - zone1 - zone4 - zone0 :	letter 'q'   
-```
-			case 0x43214:		inKey = 'q';	break;
-```
 
 
 # Full Keyboard Arrangement
@@ -104,7 +97,7 @@ This is the chosen layout
 ![Full Keyboard Layout](images/keyboard_layout.png)
 
 
-Most frequent keys (Enter, Backspace, Space) are entered with a single return to / from zone0 to one of zone4, zone3 or zone1.
+Most frequent keys (Enter, Backspace, Space) are entered with a single return from zone0 to one of zone4, zone3 or zone1 and back.
 Sequence examples
 
 
@@ -161,21 +154,33 @@ This is the chosen layout
 # Learning Required    
 
 Learning is not trivial, but reasonable.    
-2 weeks of 20 minutes daily practice should get you started. 
-At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. Not sure if this is still available.
+2 weeks of 20 minutes daily practice should get you started.   
+At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. 
 
-I personally use command line gtypist for practicing. See nunchuck.typ for a ready made set of lessons customized for NunKbd
-
+I personally use command line gtypist for practicing. See nunchuck.typ for a ready made set of lessons customized for NunKbd. Start the attached lesson on any linux prompt with:
+```
+gtypist nunchuck.typ
+```
 
 # Limitations    
-Multiple keys is not possible. Example Control – C
-BUT it is possible to create a special key combinations. Alt Tab is implemented as a single key, as it is very useful for switching between open applications.
+Multiple keys is not possible. Example Control – C.   
+BUT it is possible to create a special key combinations. Alt Tab is implemented as a single key, as it is very useful for switching between open applications.   
 This is also how the Application Swith button is implemented on commercial Bluetooth Keyboards (Ex Logitech K380)
 
-# Extensions
+# Future Extensions
 
  * Support multiple devices   
 
+# Wemos Lolin32 Lite
+
+This is the perfect microcontroller for this project.   
+
+
+ * Small size
+ * powerful
+ * Suppported by Arduino IDE
+ * Contains the hardware for bluetooth and BLE and the support library for Keyboard / HID 
+ * Connector for a LiPo battery, charging and discharging circuitry
 
 # Wiring   
 
@@ -189,14 +194,14 @@ and then refer to their colors.
 
 In my case, the colour wires were as follows
 
-Signal   | Colour  | Connected to  | Signal Name       
----------|---------|---------------|---------------       
-SDA      | Yellow  | Arduino SDA   | Data           
-DD       | Brown   | Not Connected | Device Detect               
-Vcc      | Pink    | Arduino +3.3v | VCC            
-Gnd      | Green   | Arduino GND   | GND            
-NC       |         | Not Connected | Not Connected               
-SCL      | White   | Arduino SCL   | Clock       
+Signal   | Colour  | Connected to       | Signal Name       
+---------|---------|--------------------|---------------       
+SDA      | Yellow  | Arduino SDA pin 4  | Data           
+DD       | Brown   | Not Connected      | Device Detect               
+Vcc      | Pink    | Arduino +3.3v      | VCC            
+Gnd      | Green   | Arduino GND        | GND            
+NC       |         | Not Connected      | Not Connected               
+SCL      | White   | Arduino SCL pin 16 | Clock       
        
 After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above.    
 
@@ -218,7 +223,6 @@ MOD-Wii-UEXT-NUNCHUCk
 
 
 ![Olimex breakout board](images/IMG_20210308_093404.jpg)
-
 ![Olimex breakout board - pinout](images/2021-03-08-104958_1366x768_scrot.png)
 
 
@@ -226,6 +230,8 @@ MOD-Wii-UEXT-NUNCHUCk
 # Assembly
 
 Microcontroller board is a Wemos Lolin32 Lite
+
+![Assembly ](images/IMG_20210308_102711.jpg)
 
 The housing of a mini usb hub was a perfect candidate for this.    
 The 500maH battery is taped under the board 
@@ -238,27 +244,28 @@ The handle part is empty, and the Lolin32 could nearly fit in this space. It mus
 than the origial one, and have the microcontroller and battery inside this handle.
 
 
-![Assembly ](images/IMG_20210308_102711.jpg)
 
 # Arduino IDE
 
 Install support for board "Wemos Lolin32 Lite".    
 
 The tool menu should look like this when connected to the esp32 lolin32 lite board:
-                                                                                                                                    Tools --> Board --> Board Manager --> Add the board support                                                                                                                                                                                                                                                                                                                                                          
 
-
-IDE Setting for Wemos Lolin32 Lite - Dec 2020                                                                                                                                                                                                                                 
-Board           Wemos Lolin 32                                                                                                         Upload speed    115200                                                                                                                 CPU Freq        240Mhz (Wifi / BT)                                                                                                     
-Flash Freq      80Mhz                                                                                                                  
-Part Scheme     Default                                                                                                                
-Port            /dev/ttyUSB0                                                                                                           
+```
+IDE Setting for Wemos Lolin32 Lite - Dec 2020     
+Board           Wemos Lolin 32
+Upload speed    115200
+CPU Freq        240Mhz (Wifi / BT)
+Flash Freq      80Mhz            
+Part Scheme     Default         
+Port            /dev/ttyUSB0   
+```
                                                                                                                                        
                       
 
 # Arduino Code Structure
 
-Use the I2C Wire Library for communication with nunchuck
+Use the I2C Wire Library for communication with nunchuck.    
 Use the BleKeyboard ESP32 Library for the implementation of Hid over Gatt 
 
 
@@ -269,47 +276,42 @@ BleKeyboard.init()
 Mouse.init()
 
 ## Loop Function
-if cButton is pressed, uses the mouse mode
-	Simpy move the mouse in the appropriate direction
 
+Read xValue an yValue coordinates (0 - 255)    
+Convert to center based coordinates (-128 - +127)    
 
-if cButton is NOT pressed, uses the keyboard mode
+Convert to polar coordinates (Radius, angle)    
+In fact, the program does not calculate the angle itself, but only the cosinus of the angle.    
+Similarly, it does not calculate the radius, but radius * radius    
 
-	Read x an y coordinates (0 - 255)
-	Convert to center based coordinates (-128 - +127)
+Radius is used to determine if within the central area (radius * radius < 1000)   
+Cosine of Angle Plus X and Y polararity determines the zone    
 
-	Convert to polar coordinates (Radius, angle)
-	Optimisation 
-	In fact, does not calculate the angle itself, but only the cosinus of the angle.
-	Similarly, does not calculate the radius, but radius * radius
+Identify the visited zones:    
 
-	Radius is used to determine if within the central area
-	Cosine of Angle Plus X polararity determines the segment
-
-Logic is simple.    
- * Remains in central area: Do nothing
- * Outside of central area: Keep record of quadrants visited
- * Back in central area: Record the zones visited into and format into a sequence, then call the parseSequence() function
+ * Remains in central area: Do nothing    
+ * Outside of central area: Keep record of quadrants visited    
+ * Back in central area: Record the zones visited into and format into a sequence, then call the parseSequence() function    
 
 ## ParseSequence Function
 
-Check the status of cButton and zButton.    
-Compares the sequence with one of the expected sequences    
-Send the corresponding character if the sequences match. Do nothing if no match   
+ * Compares the sequence with one of the expected sequences    
+ * Uses a different set of predefined sequences for combinations of cButton and zButton.    
+ * Send the corresponding character if the sequences match. Do nothing if there is no predefined matching sequence
 
 
 ## Debouncing   
-There is no debouncing between zone0 and the other zones, the peripheral zones. This does not seem to cause any problem.
+There is no debouncing between zone0 and the other zones, the peripheral zones. This does not seem to cause any problem.    
 
-Between the peripheral zones, the debouncing works as follows:
-When moving from zone[n] to zone[n+1], if zone[n+1] is the same as zone[n-1], then decrement the zone counter. In other words, forget about visiting zone[n], the current zone.
+Between the peripheral zones, the debouncing works as follows:    
+When moving from zone[n] to zone[n+1], if zone[n+1] is the same as zone[n-1], then decrement the zone counter. In other words, forget about visiting zone[n], the current zone.   
 Where n is the current zone, n-1 is the previous zone, and n+1 is the potential future zone
 
 
 
 ## Blinking Led
 
-One timer is used to blink the built-in Blue Led when active, and provides feedback, one quick 50 millisecond blink every second
+One timer is used to blink the built-in Blue Led when active, and provides feedback, one quick 50 millisecond blink every second.    
 When using the "Power off" command, the Led is turned ON for one second before the microcontroller is set to deep sleep. This provides a nice confirmation.
 
 ## Power Modes
@@ -321,14 +323,22 @@ The microcontroller is put to deep sleep mode in either of 2 conditions:
 
 The reset switch takes the microcontroller out of deep sleep when pressed, the keyboard reconnects in 5 seconds
 
-## Termux on Android
+# Quality of the Nunchucks
+
+I own 3 nunchucks, from different origins.
+One of them works very smoothly, the other 2 have sudden jumps in the reported xValue or yValue.    
+It looks like the cursor of the potentiometer inside the nunchuck suddenly disconnects, and the potentiometer reports either Gnd or Vcc. xValue or yValue reports 255 in these areas.   
+I am curious to know how these devices would behave when connected to a Wii box. At the moment, I just selected the smoothest nunchuck to use.    
+A possible work around could be to
+remember the previous value of either xValue or yValue, and use that previous value when reading 255.
+
+# Termux on Android
 
 Why do I need a keyboard so much on my phone?   
 I am a big fan of using termux on Android. Termux provides a pretty complete linux environment on any recent Android device, without special requirement. No root required.   
-Many standard linux packages can be installed (Ex: pkg install gtypist taskwarrior ...)
+Many standard linux packages can be installed (Ex: pkg install gtypist taskwarrior ...).    
 X11 Gui programs can be installed as well, XServer XSDL provides an Android native X11 server that termux programs can use.   
-Whenever possible, I use command line programs under termux. At a desk, I use a normal bluetooth keyboard, on the move, I take my nunchuck
-
+Whenever possible, I use command line programs under termux. At a desk, I use a normal bluetooth keyboard, on the move, I take my nunchuck.   
 
 
 # Links
@@ -339,8 +349,15 @@ Whenever possible, I use command line programs under termux. At a desk, I use a 
 https://create.arduino.cc/projecthub/infusion/using-a-wii-nunchuk-with-arduino-597254
 4. Same article, nicer to read 
 https://www.xarg.org/2016/12/using-a-wii-nunchuk-with-arduino/
+5. The termux project    
+https://wiki.termux.com/wiki/Main_Page
+6. The gtypist manual
+https://www.gnu.org/software/gtypist/doc/gtypist.html
+
+
+
 # Document Generation
-'''
+```
 pandoc -s -o Nunchuck_Ble_Keyboard.pdf  README.md
 pandoc -s -o Nunchuck_Ble_Keyboard.pdf  -V geometry:"top=2cm, bottom=2cm, left=2cm, right=2cm" README.md
-'''
+```

@@ -1,9 +1,9 @@
 //Todo
 //
-// - Find a name
 // - Use the nunchuck library - clean up the code
 //
 // - Add Alt Tab - Review the logic of key press / key release - or use the3 Android buttons
+// - Alt Ctrl K 	show - hide keyboard
 //	 Notice that App Switch is just Alt Tab - Alt is mainained for some extra time between presses
 // - 2 special Android buttons - Home - Back
 
@@ -51,26 +51,16 @@
 
 */
 
-//#include <prismino.h>
 #include <Wire.h>
-//#include <Keyboard.h>
-//#include <Mouse.h>
 #define BTSTACK_FILE__ "hid_keyboard_demo.c"
 #include <BleKeyboard.h>
 #include "esp32-hal-log.h"
 
+#define SDA_PIN	4
+#define SCL_PIN	16
 
-//#define SDA_PIN	16
-//#define SCL_PIN	4
-
-
-
-
-// Done
-// - add digits and punctuation 
-
-
-
+#define BLINK_ON 	50
+#define BLINK_OFF 	950
 
 #if CONFIG_FREERTOS_UNICORE
 #define ARDUINO_RUNNING_CORE 0
@@ -80,13 +70,10 @@
 
 BleKeyboard bleKeyboard;
 
-//uint8_t keyLookup[64];
 long sleepTimerStart = 0;
 long blinkTimerStart = 0;
 int blinkerStatus = 0;
 
-#define BLINK_ON 	50
-#define BLINK_OFF 	950
 
 
 const int ledPin = 22; // Lolin32 Lite - onboard LED
@@ -116,64 +103,6 @@ bool cButton;
 bool zButton;  
 bool mousePressed;
 
-#include <Wire.h>
-/*
-void setup()
-{
-  Wire.begin(4,16);
-  Serial.begin(115200);
-  while (!Serial);
-}
-
-void loop()
-{
-  byte error, address;
-  int I2CDevices;
-
-  Serial.println("Scanning for I2C Devices…");
-
-  I2CDevices = 0;
-  for (address = 1; address < 127; address++ )
-  {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-
-    if (error == 0)
-    {
-      Serial.print("I2C device found at address 0x");
-      if (address < 16)
-      {
-        Serial.print("0");
-      }
-      Serial.print(address, HEX);
-      Serial.println(" !");
-
-      I2CDevices++;
-    }
-    else if (error == 4)
-    {
-      Serial.print("Unknown error at address 0x");
-      if (address < 16)
-      {
-        Serial.print("0");
-      }
-      Serial.println(address, HEX);
-    }
-  }
-  if (I2CDevices == 0)
-  {
-    Serial.println("No I2C devices found\n");
-  }
-  else
-  {
-    Serial.println("****\n");
-  }
-  delay(5000);
-}
-
-*/
-
-
 void setup()
 {
 	Serial.begin(115200);
@@ -182,7 +111,7 @@ void setup()
 	//delay(1000);
 
 	pinMode(ledPin, OUTPUT);
-	Wire.begin(4,16);
+	Wire.begin(SDA_PIN, SCL_PIN);
 
 	Serial.println("After Wire.begin()");
 
@@ -271,20 +200,6 @@ void sendZero()
 	Wire.endTransmission();
 }
 
-/*void showZoneHistory()
-{
-	uint8_t index = 0;
-
-	while (index < zoneCount)
-	{
-		// Serial.print("   ");
-		//Serial.print(zoneHistory[index]);
-		index++;
-	}
-	//Serial.println("");
-}
-*/
-
 void loop()
 {
 
@@ -366,47 +281,6 @@ void loop()
 	}
 
 	cnt = 0;
-	// send the request for next bytes
-
-/*
-	if (!cButton) 			// Mouse action
-	{
-
-		xMove = 0;
-		if (xCoord < -20) xMove = -1;
-		if (xCoord > 20) xMove = 1;
-
-		yMove = 0;
-		if (yCoord < -20) yMove = 1;
-		if (yCoord > 20) yMove = -1;
-
-		//Serial.print(" cButton is pressed - ");
-		  //Serial.print(xCoord);
-		  //Serial.print(" - ");
-		  //Serial.print(yCoord);
-		  //Serial.print(" - ");
-		  //Serial.print(xMove);
-		  //Serial.print(" - ");
-		  //Serial.print(yMove);
-		  //Serial.print("\r");
-
-		//if ((xMove != 0) || (yMove != 0))
-		//{
-			//Mouse.move(xMove, yMove);
-		//}
-
-		//if ((!zButton) && (!Mouse.isPressed()))
-		//{
-			//Mouse.press();
-		//}
-		//if (zButton)
-		//{
-			//Mouse.release();
-//
-		//}
-	}
-*/
-
 	if ((zone != previousZone) && (zone == zoneHistory[zoneCount -2]) && (zoneCount > 1))		// Keyboard action - debounce
 	{
 		//Serial.println("Debouncing");
@@ -445,12 +319,6 @@ void loop()
 		{
 			//Serial.println("Back to zone 0");
 
-			
-		
-
-			//showZoneHistory();
-			//sprintf( msg, "Before calling parseSequence zoneCount is %x composite is %lx ", zoneCount, (long) composite);	
-			//Serial.println(msg);
 			if (zoneCount > 0)
 			{
 				parseSequence(composite, zoneCount);
@@ -473,30 +341,6 @@ void loop()
 
 	sprintf( msg, "\rxVal-%04d yVal-%04d zone-%d cosAngle-%04ld radius-%06ld xCoord-%04d yCoord-%04d composite-%06lx ", xValue, yValue, zone, cosAngle, radius, xCoord, yCoord, composite);	
 	Serial.print(msg);
-
-	//Serial.print(xValue);
-	//Serial.print("   ");
-	//Serial.print(yValue);
-	//Serial.print("   ");
-	//Serial.print(zone);
-	//Serial.print("   ");
-	//Serial.print(cosAngle);
-	//Serial.print("   ");
-	//Serial.print(radius);
-	//Serial.print("   ");
-	//Serial.print(xCoord);
-	//Serial.print("   ");
-	//Serial.print(yCoord);
-	//Serial.print("   ");
-	//Serial.print(composite);
-	//Serial.print("               ");
-	//Serial.print(cButton);
-	//Serial.print("   ");
-	//Serial.print(zButton);
-	//Serial.print("   ");
-	//Serial.print("\r");
-	//Serial.print("\r");
-
 
 	sendZero();
 
@@ -653,49 +497,6 @@ void parseSequence(long composite, uint8_t zoneCount)
 		}
 	}
 
-	/*else if (zButton && !cButton)					// Numeric and Punctuation mode - zButton pressed
-	{
-		switch (composite)
-		{
-			// Cross 1
-			case 0x10000:		inKey = KEY_RIGHT_ARROW;	break;
-			case 0x20000:		inKey = KEY_UP_ARROW;	break;
-			case 0x30000:		inKey = KEY_LEFT_ARROW;	break;
-			case 0x40000:		inKey = KEY_DOWN_ARROW;	break;
-
-
-			case 0x43000:		inKey = '0';	break;
-			case 0x43200:		inKey = '8';	break;
-			case 0x43214:		gotosleep();		break;
-
-			case 0x32000:		inKey = '1';	break;
-			case 0x32100:		inKey = '9';	break;
-
-			case 0x21000:		inKey = '2';	break;
-			case 0x21400:		inKey = '-';	break;
-
-
-			case 0x14000:		inKey = '3';	break;
-			case 0x14300:		inKey = ',';	break;
-
-
-			case 0x41000:		inKey = '4';	break;
-			case 0x41200:		inKey = '.';	break;
-
-			case 0x12000:		inKey = '5';	break;
-
-			case 0x23000:		inKey = '6';	break;
-
-
-			case 0x34000:		inKey = '7';	break;
-
-
-			default:								break;
-
-
-		}
-	}*/
-
 	else if (!zButton && !cButton)					// Arrow keys, power off 
 	{
 		switch (composite)
@@ -718,215 +519,100 @@ void parseSequence(long composite, uint8_t zoneCount)
 	//Keyboard.write(inKey);	
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-/*
-
+/* 	Basic code to check the i2c connectivity
 void setup()
 {
-		Serial.begin(115200);
-	//	Serial1.begin(9600);
-
-		pinMode(row1, OUTPUT);
-		pinMode(row2, OUTPUT);
-		pinMode(row3, OUTPUT);
-		pinMode(row4, OUTPUT);
-		pinMode(row5, OUTPUT);
-		pinMode(row6, OUTPUT);
-		pinMode(row7, OUTPUT);
-		pinMode(row8, OUTPUT);
-
-		pinMode(colA, INPUT_PULLUP);
-		pinMode(colB, INPUT_PULLUP);
-		pinMode(colC, INPUT_PULLUP);
-		pinMode(colD, INPUT_PULLUP);
-		pinMode(colE, INPUT_PULLUP);
-		pinMode(colF, INPUT_PULLUP);
-		pinMode(colG, INPUT_PULLUP);
-		pinMode(colH, INPUT_PULLUP);
-		pinMode(colI, INPUT_PULLUP);
-
-		pinMode(ledPin, OUTPUT);
-
-		bleKeyboard.begin();
-		bleKeyboard.deviceName = "esp32 - g66";
-
-		keyValue = 0;
-		previousKey = 0;
-
-		for(int i=0; i<256; i++)
-		{
-				isKeyPressed[i] = 0;
-				wasKeyPressed[i] = 0;
-		}
-
-	//mode = MODE_USB;
-
-
-	// Will now somehow blink - indication that BLE setup fails at boot time
-	digitalWrite(ledPin, LOW);
-	sleepTimerStart = millis();
-
-	Serial.setDebugOutput(true);
-	log_printf("Calling log_printf\n");
-	esp_log_level_set("*", ESP_LOG_VERBOSE);
-	ESP_LOGD("EXAMPLE", "This doesn't show");
-
-
-	bleKeyboard.begin();
-
-	Serial.println("Done with BLE setup");
-
-	// Another slow blink - indication that BLE setup fails at boot time
-	//delay( 100 ); 	
-	digitalWrite(ledPin, HIGH);
-	Serial.println("After 1 more second");
-
-	initLookup();
-	sleepTimerStart = millis();
-
+  Wire.begin(SDA_PIN, SCL_PIN);
+  Serial.begin(115200);
+  while (!Serial);
 }
-*/
 
+void loop()
+{
+  byte error, address;
+  int I2CDevices;
+
+  Serial.println("Scanning for I2C Devices…");
+
+  I2CDevices = 0;
+  for (address = 1; address < 127; address++ )
+  {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0)
+    {
+      Serial.print("I2C device found at address 0x");
+      if (address < 16)
+      {
+        Serial.print("0");
+      }
+      Serial.print(address, HEX);
+      Serial.println(" !");
+
+      I2CDevices++;
+    }
+    else if (error == 4)
+    {
+      Serial.print("Unknown error at address 0x");
+      if (address < 16)
+      {
+        Serial.print("0");
+      }
+      Serial.println(address, HEX);
+    }
+  }
+  if (I2CDevices == 0)
+  {
+    Serial.println("No I2C devices found\n");
+  }
+  else
+  {
+    Serial.println("****\n");
+  }
+  delay(5000);
+}
+
+*/
 
 
 /*
-void loop()
-{
-
-		int keyCount = 0;
-		int index = 0;
-
-		previousKey = keyValue;
-		isLWinDown = 0;
-
-		//Serial.println("Looping");
-
-		for(int i=0; i<256; i++)
-		{
-				wasKeyPressed[i] = isKeyPressed[i];
-				isKeyPressed[i] = 0;
-		}
-		//   isKeyPressed = 0;
-		keyValue = 0;
-
-
-		if(noKey == 16)
-		{ // no keys were pressed
-				readKey = true; // keyboard is ready to accept a new keypress
-		}
-		noKey = 0;
-
-
-
-
-	for(int rIndex=0; rIndex < (sizeof(arRows) / sizeof(int)); rIndex++)
+	if (!cButton) 			// Mouse action
 	{
-		pullDownRow(arRows[rIndex]); // switch on one row at a time
-		//Serial.print("Looping on rows: ");
-		//Serial.println(arRows[rIndex]);
 
-		for(int colIndex = 0; colIndex < (sizeof(arCols)/sizeof(int)); colIndex++)
-		{
-			//delay(100); 
-			//Serial.print("Looping on columns: ");
-			//Serial.println(arCols[colIndex]);
+		xMove = 0;
+		if (xCoord < -20) xMove = -1;
+		if (xCoord > 20) xMove = 1;
 
-			if (digitalRead(arCols[colIndex]) == 0)
-			{
-				Serial.print("Pressed row ");
-				Serial.print(arRows[rIndex]);
-				Serial.print(" Col " );
-				Serial.println(arCols[colIndex]);
+		yMove = 0;
+		if (yCoord < -20) yMove = 1;
+		if (yCoord > 20) yMove = -1;
 
-				index = rIndex * 10 + colIndex;
-				isKeyPressed[index] = 1;
-				Serial.print("index is  " );
-				Serial.println(index);
+		//Serial.print(" cButton is pressed - ");
+		  //Serial.print(xCoord);
+		  //Serial.print(" - ");
+		  //Serial.print(yCoord);
+		  //Serial.print(" - ");
+		  //Serial.print(xMove);
+		  //Serial.print(" - ");
+		  //Serial.print(yMove);
+		  //Serial.print("\r");
 
-				sleepTimerStart = millis();
+		//if ((xMove != 0) || (yMove != 0))
+		//{
+			//Mouse.move(xMove, yMove);
+		//}
 
-			}
-		}
+		//if ((!zButton) && (!Mouse.isPressed()))
+		//{
+			//Mouse.press();
+		//}
+		//if (zButton)
+		//{
+			//Mouse.release();
+//
+		//}
 	}
-
-	delay(debounceDelay);
-
-	if ((isKeyPressed[50] == 1) && (isKeyPressed[60] == 1) && (isKeyPressed[75] == 1))			// Alt Ctrl BackSpace
-	{
-		gotosleep();
-	}
-
-	for(int i=0; i<256; i++)
-	{
-		if ((isKeyPressed[i] == 1) && (wasKeyPressed[i] == 0))
-		{
-
-			// Esc, Back, Space and Enter, send immediately
-			if (keyLookup[i] != 0)
-			{
-				Serial.print("Pressed ");
-				Serial.println(i);
-				bleKeyboard.press(keyLookup[i]);
-			}
-
-		}
-		if ((isKeyPressed[i] == 0) && (wasKeyPressed[i] == 1))
-		{
-			Serial.println("Released ");
-			Serial.println(i);
-			//bleKeyboard.release(keyLookup[i]);
-			//bleKeyboard.releaseAll();
-			bleKeyboard.release(keyLookup[i]);
-		}
-	}
-
-
-
-	long timer = millis() - sleepTimerStart;
-	printf("timer is now %ld\n", timer);
-	if (timer > 300000L)
-	{
-		gotosleep();
-		//digitalWrite(ledPin, HIGH);
-		//printf("Going to sleep\n");
-		//Serial.println(getCpuFrequencyMhz());
-		//vTaskDelay(500 / portTICK_RATE_MS);
-		//vTaskDelay(500 / portTICK_RATE_MS);
-		////Enter sleep mode 
-		//esp_deep_sleep_start();
-	}
-
-	long blinkTimer = millis() - blinkTimerStart;
-
-	if ((blinkerStatus == 0) && (blinkTimer > BLINK_ON))
-	{
-		//printf("Blinker OFF\n");
-		blinkerStatus = 1;
-		digitalWrite(ledPin, blinkerStatus);
-		blinkTimerStart = millis();
-	}
-	else if ((blinkerStatus == 1) && (blinkTimer > BLINK_OFF))
-	{
-		//printf("Blinker ON\n");
-		blinkerStatus = 0;
-		digitalWrite(ledPin, blinkerStatus);
-		blinkTimerStart = millis();
-	}
-
-
-
-
-}
 */
+
 
