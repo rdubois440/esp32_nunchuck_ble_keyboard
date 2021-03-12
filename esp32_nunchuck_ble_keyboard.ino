@@ -75,7 +75,8 @@ long sleepTimerStart = 0;
 long blinkTimerStart = 0;
 int blinkerStatus = 0;
 
-
+int wasAltTab = 0;
+int isShiftDown = 0;
 
 const int ledPin = 22; // Lolin32 Lite - onboard LED
 
@@ -347,7 +348,7 @@ void loop()
 
 
 	long timer = millis() - sleepTimerStart;
-	printf("timer is now %ld\n", timer);
+	//printf("timer is now %ld\n", timer);
 	if (timer > 300000L)
 	{
 		gotosleep();
@@ -417,7 +418,10 @@ void parseSequence(long composite, uint8_t zoneCount)
 		{
 			// Cross 1
 			case 0x10000:		inKey = ' ';	break;
-			case 0x20000:		inKey = ' ';	break;
+			case 0x20000:		
+				isShiftDown = 1;	
+				Serial.println("Pressing Shift");
+				break;
 			case 0x30000:		inKey = '\b';	break;
 			case 0x40000:		inKey = '\n';	break;
 
@@ -508,16 +512,32 @@ void parseSequence(long composite, uint8_t zoneCount)
 			case 0x10000:		inKey = KEY_TAB;	break;
 
 			case 0x20000:							// Alt Tab emulation - Like F5 on K380 - Do not release KEY_ALT immediately	
-				bleKeyboard.press(KEY_LEFT_ALT);
-				bleKeyboard.press(KEY_TAB);
-				//bleKeyboard.release(KEY_LEFT_ALT);
-				bleKeyboard.release(KEY_TAB);
+				if (wasAltTab == 0)
+				{
+					bleKeyboard.press(KEY_LEFT_ALT);
+					bleKeyboard.press(KEY_TAB);
+					bleKeyboard.release(KEY_TAB);
+					//bleKeyboard.release(KEY_LEFT_ALT);		This will be released later, if next key is not again an Alt Tab
+					wasAltTab = 1;
+				}
+				else
+				{
+					bleKeyboard.press(KEY_TAB);
+					bleKeyboard.release(KEY_TAB);
+				}
 				break;
 
 			case 0x30000:		inKey = KEY_ESC;	break;
 
-		//bleKeyboard.press(inKey);
-		//bleKeyboard.release(inKey);
+			case 0x40000:		
+					bleKeyboard.press(KEY_LEFT_ALT);
+					bleKeyboard.press(KEY_LEFT_CTRL);
+					bleKeyboard.press('k');
+					bleKeyboard.release('k');
+					bleKeyboard.release(KEY_LEFT_CTRL);
+					bleKeyboard.release(KEY_LEFT_ALT);
+				break;
+
 
 			default:								break;
 
@@ -527,10 +547,26 @@ void parseSequence(long composite, uint8_t zoneCount)
 
 	if (inKey != 0)
 	{
-		bleKeyboard.release(KEY_LEFT_ALT);		// Release Alt for any key - except one key Alt Tab
+		if (isShiftDown == 1)
+		{
+			bleKeyboard.press(KEY_LEFT_SHIFT);		// One time shift before the real key
+		}
+
+		if (wasAltTab == 1)
+		{
+			bleKeyboard.release(KEY_LEFT_ALT);		// Release Alt for any key - except one key Alt Tab
+			wasAltTab = 0;
+		}
+
 		bleKeyboard.press(inKey);
 		bleKeyboard.release(inKey);
-		//Keyboard.write(inKey);	
+
+		if (isShiftDown == 1)
+		{
+			Serial.println("Releasing Shift");
+			bleKeyboard.release(KEY_LEFT_SHIFT);		// Release Left Shift after it was active one time
+			isShiftDown = 0;
+		}
 	}
 }
 

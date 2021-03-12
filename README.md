@@ -102,6 +102,7 @@ Sequence examples
 
 
  * A quick trip from zone0 to zone1 and back is a space
+ * A quick trip from zone0 to zone2 and back is a one-time press of the left shift key.Produces one Upper case character
  * A quick trip from zone0 to zone3 and back is a backspace
  * A quick trip from zone0 to zone4 and back is an Enter
 
@@ -151,13 +152,24 @@ This is the chosen layout
 ## Special Actions - zButton AND cButton Pressed 
 
  * A quick trip from zone0 to zone1 and back is a TAB
- * A quick trip from zone0 to zone3 and back is an ESCAPE
  * A quick trip from zone0 to zone2 and back, with C and Z buttons pressed, is the Application Switch key.
+ * A quick trip from zone0 to zone3 and back is an ESCAPE
+ * A quick trip from zone0 to zone4 and back is special key combination Alt + Ctrl + k. This is used in termux to show / hide the soft keyboard
+
+## Upper Case Characters
+
+As mentionned above, a quick trip from zone0 to zone2 and back is a one-time press of the left shift key.Produces one Upper case character
+
+No action is produced immediately in this case, but a variable is set to 1, and will be reset AFTER the next key is produced. This gives access to the full keyboard 
+in Shift (or Caps Lock) mode, but for one character only. Ex: on Querty keyboards, this gives access to ! @ # $ etc.  
+Of course this can be repeated before the next character is desired.
+
 
 ## Android Special Keys
 
 Bluetooth keyboards designed for Android devices provide 4 extra buttons, Home, Application Switch, Menu and Back. One of the problems with these buttons is that 
 their names are not fully standardized, sometimes used ambiguously
+
 
 ### Application Switch key
 
