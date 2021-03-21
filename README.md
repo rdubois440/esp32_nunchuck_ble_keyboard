@@ -12,19 +12,19 @@ Provide a single hand, ligthweight, ultra portable and fun bluetooth keyboard fo
 
  * Lightweight - Ultra portable - fun - reaasonably efficient
  * Single hand operation
+ * Can even be used "inside the pocket", totally unnoticed.
  * Cross platform support. Natural target is Android phones, but works just as well with tablets, Windows and Linux PCs, Chromebooks, Mac, and even iPhones
  * Natively supported on all these platforms, nothing to install. NunKbd behaves as a standard Bluetooth Keyboard
  * Does not consume any spcace on the display. Compared to soft on-screen keyboards, screen space is completely free
- * An octogon limits the movement of the joystick. This octogon shape provides natural feedback about the movements
+ * An octogon limits the movement of the joystick. This octogon shape also provides natural feedback about the movements
  * Keyboard can easily be curstomised for a given subset of keys for a professional usage (data collection, control)
  * Could be useful to handicapped people. Alphabetic characters are accessible with a single finger. 
- * With some experience, it can be used when walking. For taking quick notes, if you accept a reasonable amount of typing errors, it can be used without watching the screen, 
- to the octogonal shape limiting, and providing feedback to the movements of the joystick
+ * With some experience, it can be used when walking. For taking quick notes, if you accept a reasonable amount of typing errors, it can be used without watching any screen. 
 
 # Original Keys Arrangement - 8Pen Project   
 
 The NunKbd project was initially inspired by the 8Pen project. 
-See the links to the 8Pen project at the end of this article, and an description of the concept below (Copied from http://www.8pen.com/concept):
+See the links to the 8Pen project at the end of this article, and a description of the concept below (Copied from http://www.8pen.com/concept):
 
  * To enter a letter, start by placing the finger/pointer in the central region
  * Without lifting, move out in the sector that contains the letter
@@ -34,13 +34,13 @@ See the links to the 8Pen project at the end of this article, and an description
 ![8Pen Layout](images/8pen_color.jpeg)  
 
 
-# Entering Characters
+# Entering Characters with NunKbd
 
 See the zones identified as zone0 to zone4 below, and the branches separating the zones (the diagonal lines).    
 At rest, the nunchuck is in zone0. If moved to the direction of west, this is zone1. North is zone2 etc.    
 The code tracks the position of the nunchuck. and records it in a sequence.    
 A sequence starts from zone 0, and ends when back to zone 0.    
-When recording the sequence, the starting and ending zones, both are 'zone0' are omitted.    
+When recording the sequence, the starting and ending zones, which are both 'zone0' are omitted.    
 The longest sequence required to encode a complete keyboard crosses 4 branches in a complete turn. The longest sequence to record is therefore 5 zones long, starting and ending in 
 the same zone. 
    
@@ -149,16 +149,16 @@ This is the chosen layout
 
 
 
-## Special Actions - zButton AND cButton Pressed 
+## Special Actions - Z and C Buttons Pressed 
 
  * A quick trip from zone0 to zone1 and back is a TAB
- * A quick trip from zone0 to zone2 and back, with C and Z buttons pressed, is the Application Switch key.
+ * A quick trip from zone0 to zone2 and back, is the Application Switch key.
  * A quick trip from zone0 to zone3 and back is an ESCAPE
  * A quick trip from zone0 to zone4 and back is special key combination Alt + Ctrl + k. This is used in termux to show / hide the soft keyboard
 
 ## Upper Case Characters
 
-As mentionned above, a quick trip from zone0 to zone2 and back is a one-time press of the left shift key.Produces one Upper case character
+As mentionned above, a quick trip from zone0 to zone2 and back is a one-time press of the left shift key. This will produce one Upper case character with the next key.
 
 No action is produced immediately in this case, but a variable is set to 1, and will be reset AFTER the next key is produced. This gives access to the full keyboard 
 in Shift (or Caps Lock) mode, but for one character only. Ex: on Querty keyboards, this gives access to ! @ # $ etc.  
@@ -199,12 +199,11 @@ In addition, after 500 milliseconds, the selected application will open in full 
 
 Nunchuck implements this a bit differently.
 
-A timer would be inefficient, NunKbd cannot be as fast as a regular keyboard. A One-key Alt-Tab is available with both C and Z buttons pressed, and a quick trip from zone0 to zone1 and back. 
+A timer would be inefficient, NunKbd cannot be as fast as a regular keyboard. A One-key Alt-Tab is available with both C and Z buttons pressed, and a quick trip from zone0 to zone2 and back. 
 This triggers both KEY_LEFT_ALT and KEY_TAB, but only KEY_TAB is released.   
  * If the next key is again a One-key Alt-Tab, then KEY_TAB is pressed again, cycling through all open windows
  * If the next key is a different key, LEFT_ALT is released, and the next key sent normally.
 
-The Application Switch key is available with both C and Z buttons pressed, and a quick trip from zone0 to zone2 and back.
 
 ### Menu Key
 
@@ -221,11 +220,11 @@ Home and Back keys are of very little use on a single hand keyboard, and are not
 
 # Learning Required    
 
-Learning is not trivial, but reasonable.    
-2 weeks of 20 minutes daily practice should get you started.   
+Learning is not trivial, but reasonable, 2 weeks of 20 minutes daily practice should get you started.   
+
 At the time of the original proect, I recommended purchasing 8Pen for android for 99 cents for learning. 
 
-I personally use command line gtypist for practicing. See nunchuck.typ for a ready made set of lessons customized for NunKbd. Start the attached lesson on any linux prompt with:
+I personally use command line gtypist for practice. See nunchuck.typ for a ready made set of lessons customized for NunKbd. Start the attached lesson on any linux prompt with:
 ```
 gtypist nunchuck.typ
 ```
@@ -258,9 +257,8 @@ and then refer to their colors.
 
 ## Front view of the nunchuck connector
 
-![Nunchuck Connector](images/20171011-160313-Rene.jpg)
 
-In my case, the colour wires were as follows
+In my case, the colour wires were as follows    
 
 Signal   | Colour  | Connected to       | Signal Name       
 ---------|---------|--------------------|---------------       
@@ -271,6 +269,8 @@ Gnd      | Green   | Arduino GND        | GND
 NC       |         | Not Connected      | Not Connected               
 SCL      | White   | Arduino SCL pin 16 | Clock       
        
+![Nunchuck Connector](images/20171011-160313-Rene.jpg)
+
 After carefully identifying the colour of each signal, cut the cable about 5cm from the connector, and connect the wires to the arduino according to the table above.    
 
 Program is configured to expect SDA on pin 4, and SCL on pin 16
@@ -297,7 +297,6 @@ MOD-Wii-UEXT-NUNCHUCk
 
 # Assembly
 
-Microcontroller board is a Wemos Lolin32 Lite
 
 ![Assembly ](images/IMG_20210308_102711.jpg)
 
@@ -311,6 +310,12 @@ The nunchuck enclosure is pretty empty. It just contains a small board, horizont
 The handle part is empty, and the Lolin32 could nearly fit in this space. It must be possible to create a 3D printed handle (just the bottom part), slightly bigger
 than the origial one, and have the microcontroller and battery inside this handle.
 
+# Arduino IDI vs ESP-IDF FreeRTOS 
+
+There are 2 main development environments for the Lolin32, the native ESP-IDF FreeRTOS and the more friendly Arduino IDE.
+
+I would normally prefer using the ESP-IDF FreeRTOS, which provides a better control of the environment, but unfortunately this environment only provided 
+HID library for the Bluetooth mode 3, In bluetooth 3 mode, the reconnection to the phone was not as smooth at in bluetooth 4 mode, as provided by the Arduino IDE environment.
 
 
 # Arduino IDE
@@ -380,18 +385,22 @@ Where n is the current zone, n-1 is the previous zone, and n+1 is the potential 
 ## Blinking Led
 
 One timer is used to blink the built-in Blue Led when active, and provides feedback, one quick 50 millisecond blink every second.    
-When using the "Power off" command, the Led is turned ON for one second before the microcontroller is set to deep sleep. This provides a nice confirmation.
+When using the "Power off" command, the Led is turned ON for one second before the microcontroller is set to deep sleep. This provides a nice confirmation.    
+Timers are not real hardware implemented timers. Timers are just variables which record the starting time of certain events. In the loop function, called every 10 milliseconds, 
+the time passed since this event is calculated using the current time. 
+
 
 ## Power Modes
 
 There is no power switch, the esp32 board is always powered.
 The microcontroller is put to deep sleep mode in either of 2 conditions:
+
  * The joystick remainded untouched for the last 5 minutes
  * The special "Power Off" sequence is manually entered.   
 
 The reset switch takes the microcontroller out of deep sleep when pressed, the keyboard reconnects in 5 seconds
 
-# Quality of the Nunchucks
+# Note on the Quality of the Nunchucks
 
 I own 3 nunchucks, from different origins.
 One of them works very smoothly, the other 2 have sudden jumps in the reported xValue or yValue.    

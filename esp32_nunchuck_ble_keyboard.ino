@@ -1,10 +1,9 @@
 //Todo
 //
+// - Review outstanding keys - = [ ] ; ' \\ / <
 //
-// - Alt Ctrl K 	show - hide keyboard
-// - One character in caps lock - sticky shift
-// - 2 special Android buttons - Home - Back
-//
+// - Battery life time - power usage
+// - 2 special Android buttons - Home - Back  
 // - Use the nunchuck library - clean up the code
 //
 // - Something strange occurs on first nunchuck. When xValue = 255 AND yValue = 255. Radius becomes negative. Root cause is identified (potentiometers), but why is radius negative ?
@@ -14,6 +13,8 @@
 // - Multi device support (like K380 F1 F2 F3)
 
 // Done
+// - One character in caps lock - sticky shift
+// - Alt Ctrl K 	show - hide keyboard
 // - Add Alt Tab - Review the logic of key press / key release - Notice that App Switch is just Alt Tab - Alt is mainained for some extra time between presses
 //	Implemented the Application Key - Menu Key
 // - Esc  Tab | / ~
@@ -50,6 +51,51 @@
 				Pink	Brown 	White	Yellow	Green
 
 
+                       \
+
+                  [    -
+
+                  6    2
+
+     '  9  1                5  =   
+
+        ]  7                3  ,  /
+
+                  0    4
+
+                  8    .
+
+                  ;    `
+
+8	9	hyphen equal 
+dot comma	square_open square_close
+semicolon	quote 	backslash slash
+back_tick
+
+
+
+
+
+                  J    P
+
+                  W    L
+
+                  S    A
+
+   Z  Y  D  T                N  M  K
+
+      X  F  H                O  C  B
+
+                  E    I
+
+                  R    U
+
+                  G    V
+
+                  Q    
+
+
+
 */
 
 #include <Wire.h>
@@ -79,6 +125,8 @@ int wasAltTab = 0;
 int isShiftDown = 0;
 
 const int ledPin = 22; // Lolin32 Lite - onboard LED
+const int nunchuckPower = 19; // Lolin32 Lite - onboard LED
+
 
 
 /*
@@ -110,9 +158,16 @@ void setup()
 	Serial.begin(115200);
 
 	Serial.println("Inside setup()");
-	//delay(1000);
+
+	bleKeyboard.begin();		// Start this first - it takes some time to reconnect
+	bleKeyboard.deviceName = "esp32 - nunchuck";
 
 	pinMode(ledPin, OUTPUT);
+	pinMode(nunchuckPower, OUTPUT);
+	digitalWrite(nunchuckPower, HIGH);
+
+	//delay(1000);
+
 	Wire.begin(SDA_PIN, SCL_PIN);
 
 	Serial.println("After Wire.begin()");
@@ -136,8 +191,6 @@ void setup()
 
 	//Serial.println("zone - cosAngle - radius - xCoord - yCoord");
 
-	bleKeyboard.begin();
-	bleKeyboard.deviceName = "esp32 - nunchuck";
 	
 
 
@@ -385,10 +438,12 @@ void gotosleep()
 	{
 		digitalWrite(ledPin, LOW);
 		printf("Going to sleep\n");
+		digitalWrite(nunchuckPower, LOW);
 		Serial.println(getCpuFrequencyMhz());
 		vTaskDelay(500 / portTICK_RATE_MS);
 		vTaskDelay(500 / portTICK_RATE_MS);
 		/* Enter sleep mode */
+		esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_OFF);
 		esp_deep_sleep_start();
 	}
 
@@ -476,29 +531,34 @@ void parseSequence(long composite, uint8_t zoneCount)
 
 			case 0x43000:		inKey = '0';	break;
 			case 0x43200:		inKey = '8';	break;
+			case 0x43210:		inKey = ';';	break;
 			case 0x43214:		gotosleep();		break;
 
 			case 0x32000:		inKey = '1';	break;
 			case 0x32100:		inKey = '9';	break;
+			case 0x32140:		inKey = '\'';	break;
 
 			case 0x21000:		inKey = '2';	break;
 			case 0x21400:		inKey = '-';	break;
+			case 0x21430:		inKey = '\\';	break;
 
 			case 0x14000:		inKey = '3';	break;
 			case 0x14300:		inKey = ',';	break;
+			case 0x14320:		inKey = '/';	break;
 
 			case 0x41000:		inKey = '4';	break;
 			case 0x41200:		inKey = '.';	break;
+			case 0x41230:		inKey = '`';	break;
 			case 0x41234:		inKey = 0xed;	break;			// This is the Windows Application Key - Menu key - equivalent to mouse right click
 
 			case 0x12000:		inKey = '5';	break;
-			case 0x12300:		inKey = '/';	break;
+			case 0x12300:		inKey = '=';	break;
 
 			case 0x23000:		inKey = '6';	break;
-			case 0x23400:		inKey = '|';	break;
+			case 0x23400:		inKey = '[';	break;
 
 			case 0x34000:		inKey = '7';	break;
-			case 0x34100:		inKey = '~';	break;
+			case 0x34100:		inKey = '[';	break;
 
 			default:								break;
 		}
